@@ -49,5 +49,69 @@
  *   mgr.getUpcoming("2025-01-01", 1); // => [{ name: "Republic Day", ... }]
  */
 export function createFestivalManager() {
-  // Your code here
+  let festivals = [];
+
+  const validTypes = ["religious", "national", "cultural"];
+
+  function addFestival(name, date, type) {
+    if (
+      typeof name !== "string" ||
+      name.trim() === "" ||
+      typeof date !== "string" ||
+      !validTypes.includes(type)
+    ) {
+      return -1;
+    }
+
+    if (festivals.some(f => f.name === name)) {
+      return -1;
+    }
+
+    const festival = { name, date, type };
+    festivals = [...festivals, festival];
+
+    return festivals.length;
+  }
+
+  function removeFestival(name) {
+    const exists = festivals.some(f => f.name === name);
+    if (!exists) return false;
+
+    festivals = festivals.filter(f => f.name !== name);
+    return true;
+  }
+
+  function getAll() {
+    return festivals.map(f => ({ ...f }));
+  }
+
+  function getByType(type) {
+    return festivals
+      .filter(f => f.type === type)
+      .map(f => ({ ...f }));
+  }
+
+  function getUpcoming(currentDate, n = 3) {
+    if (typeof currentDate !== "string") return [];
+
+    return festivals
+      .filter(f => f.date >= currentDate)
+      .slice()
+      .sort((a, b) => a.date.localeCompare(b.date))
+      .slice(0, n)
+      .map(f => ({ ...f }));
+  }
+
+  function getCount() {
+    return festivals.length;
+  }
+
+  return {
+    addFestival,
+    removeFestival,
+    getAll,
+    getByType,
+    getUpcoming,
+    getCount
+  };
 }
